@@ -1,9 +1,16 @@
 /*
  * Cube_Sketch.ino
+ * 
+ * Disclaimer:  The implementation of the setup(), setPixel(), and ISR are our own extensions of Steve Manley's test code
+ *              which can be found here https://www.dropbox.com/sh/fyvszu2xnow17fg/AACIvhJXBHD9Ufc1iOc-I8F3a/Arduino%20Sketches/Cube_Test_V0.0?dl=0
+ *              The animations where inspired by a Youtube video titled "3D 8x8x8 RGB LED Cube - DEMO and BUILD [extended version]"
+ *              and that can be found here https://www.youtube.com/watch?v=eO8LM893oGw
+ *              Kevin Darrah's tutorial and explanation videos where also of great help. 
+ *              His Youtube channel can be found here https://www.youtube.com/user/kdarrah1234
  *
  * Created: 3/21/2017 12:34:55 PM
  * Author:  Eduardo Padilla 
- * Editor:  Dagan Danevic 
+ * Author:  Dagan Danevic 
  */
 
 #include "SPI.h" // SPI Library used to clock data out to the shift registers
@@ -47,9 +54,9 @@ volatile byte anodeLevel[] = {            // used by 74HC595N shift register to 
 *******************************************************************************************/
 void setup() {
   // set up IO pins as outputs
-  pinMode(SPI_SCK,  OUTPUT);
-  pinMode(SPI_MOSI, OUTPUT);
-  pinMode(SR_LATCH, OUTPUT);
+  pinMode(SPI_SCK,  OUTPUT);                 // Clock
+  pinMode(SPI_MOSI, OUTPUT);                 // Data Out
+  pinMode(SR_LATCH, OUTPUT);                 // Latch
 
   digitalWrite(SR_BLANK, HIGH);              // temporarily disable all shift register outputs
   digitalWrite(SR_LATCH,  LOW);              // set shift register latch to initial state
@@ -72,6 +79,8 @@ void setup() {
   SPI.setBitOrder    (MSBFIRST);        // most significant bit first
   SPI.setClockDivider(SPI_CLOCK_DIV2);  // run the data in at 16MHz/2 - 8MHz (max speed)
   SPI.begin();                          // start up SPI
+
+  randomSeed(analogRead(0));            // initializing pseudo-random number generator for random sequences
 }
 
 /*******************************************************************************************
